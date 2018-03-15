@@ -49,3 +49,4 @@ sns.regplot(advertising.TV,advertising.sales,order=1,ci=None,scatter_kws={'color
 plt.xlim(-10,310)
 plt.ylim(ymin=0)
 
+
