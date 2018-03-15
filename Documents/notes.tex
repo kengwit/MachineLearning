@@ -1,0 +1,173 @@
+\documentclass[11pt]{article}
+%
+%.....Packages used
+%
+\usepackage{graphicx,textcomp}
+%\usepackage[sort,compress,colon,square,numbers]{natbib}
+\usepackage[square,sort,comma,numbers]{natbib}
+\bibliographystyle{plainnat}
+\usepackage{url}
+
+\usepackage{amsmath,amsfonts,amsthm,eucal}
+\usepackage{enumerate}
+\usepackage[letterpaper,margin=1in]{geometry}
+\usepackage{setspace}
+\usepackage{float,color}
+\usepackage[colorlinks,linkcolor=blue,citecolor=blue]{hyperref}
+\usepackage{multirow}
+\usepackage{authblk}
+%\usepackage{pdfsync}
+%
+%.....User defined commands and environments
+%
+\newcommand{\tensor}[1]{\ensuremath{\boldsymbol{#1}}}
+\newcommand{\jump}[1]{\lbrack\!\lbrack #1 \rbrack\!\rbrack}
+\newcommand{\alert}[1]{\textcolor{red}{#1}}
+\newcommand{\avg}[1]{\left<#1\right>}
+\DeclareMathOperator{\grad}{\nabla^{\tensor x}}
+\DeclareMathOperator{\diver}{\nabla^{\tensor x}\cdot}
+\DeclareMathOperator{\lap}{\Delta^{\tensor x}}
+\DeclareMathOperator{\Grad}{\nabla^{\tensor X}}
+\DeclareMathOperator{\Diver}{\nabla^{\tensor X}\cdot}
+\DeclareMathOperator{\sym}{sym}
+\DeclareMathOperator{\skw}{skw}
+\DeclareMathOperator{\tr}{tr}
+\DeclareMathOperator{\dev}{dev}
+\DeclareMathOperator{\meas}{meas}
+\newtheorem{prop}{Proposition}
+\theoremstyle{remark}
+\newtheorem{rmk}{Remark}
+\floatstyle{plaintop}
+\newfloat{boxes}{tbp}{lop}
+\floatname{boxes}{Box}
+
+\doublespacing
+ \usepackage{lineno}
+%  \linenumbers
+%
+%.....Begin Document
+%
+
+\title{Notes on Machine Learning}
+\author[1]{Keng-Wit Lim\thanks{kengwit@gmail.com}}
+\affil[1]{XXXX Los Angeles, CA, USA}
+
+\renewcommand\Authands{ and }
+
+\begin{document}
+
+\maketitle
+%\begin{center}
+%\LARGE{Hardening Soil Model}\\
+%\begin{spacing}{2.0}
+%\end{spacing}
+%\large{Xilin %Liu\renewcommand{\thefootnote}{\fnsymbol{footnote}}\footnote{E-mail: abc@abc (XXX).} and Keng-Wit Lim\renewcommand{\thefootnote}{\fnsymbol{footnote}}\footnote{E-mail: abc@abc (XXX).}}\\[0pt]
+%\small\emph{XXX\\}
+%            \end{center}
+%\thispagestyle{empty}
+%\noindent$\hrulefill$
+
+\section*{Abstract}
+Notes on Machine Learning
+
+\noindent$\hrulefill$\\
+Keywords: XXX
+
+\section{Notation}
+\begin{eqnarray}
+\bold{y} = 
+\left\{
+\begin{array}{c}
+y_1\\
+y_2\\
+\vdots\\
+y_N
+\end{array}
+\right\}
+\end{eqnarray}
+%%%
+\begin{eqnarray}
+\bold{X} =
+\left[
+\begin{array}{cccc}
+1 & X_{11} & \hdots & X_{1p}\\
+1 & X_{21} & \hdots & X_{2p}\\
+  & \vdots &  & \\
+1 & X_{N1} & \hdots & X_{Np}
+\end{array}
+\right]
+\end{eqnarray}
+%%%
+\begin{eqnarray}
+\boldsymbol{\beta} =
+\left\{
+\begin{array}{c}
+\beta_0\\
+\beta_1\\
+\vdots\\
+\beta_p
+\end{array}
+\right\}
+\end{eqnarray}
+
+\section{Linear Regression}
+\subsection{Assumptions}
+The following assumptions will allow us to draw inferences about the estimators and linear regression model:
+\begin{enumerate}
+\item A linear regression model assumes that the regression function
+\begin{eqnarray}
+f(\bold{X}) &=& \text{E}(\bold{y}|\bold{X})\nonumber\\
+%%
+&=& \beta_0 + \sum_{j=1}^p X_{ij}\beta_j\nonumber\\
+%%
+&=& \bold{X}\bold{\beta}\label{eqLinearRegressionFunction}
+\end{eqnarray}
+is linear in the inputs $\bold{X}$. This means that \eqref{eqLinearRegressionFunction} is assumed to be the correct model for the mean and that the conditional expectation of $\text{E}(\bold{y}|\bold{X})$ is linear in $X_1,\hdots,X_p$.
+%%%%
+%%%%
+\item The \emph{true} relation between a quantitative response $\bold{y}$ on the basis of predictors $\bold{X}$ is assumed to take the form
+\begin{eqnarray}
+\bold{y} &=& \text{E}(\bold{y}|\bold{X}) + \boldsymbol{\epsilon}\nonumber\\
+%%
+&=& \bold{X}\bold{\beta} + \boldsymbol{\epsilon}\label{eqTrueY}
+\end{eqnarray}
+where $\boldsymbol{\epsilon}$ is the error or residual vector, and it is assumed that $\boldsymbol{\epsilon} \sim N(\bold{0},\boldsymbol{\sigma})$ i.e. vector of zero mean and vector of (unobserved) variance $\boldsymbol{\sigma}$. The assumed relation \eqref{eqTrueY} means that the deviations of $\bold{y}$ around its expectation are additive and Gaussian.
+\end{enumerate}
+%%%%
+%%%%
+\subsection{Solution for the Estimators}
+In linear regression, we assume that there is approximately a linear relation between $\bold{y}$ and $\bold{X}$:
+\begin{eqnarray}
+\bold{y} &\approx& \bold{X}\bold{\beta}
+\end{eqnarray}
+%%%%%
+%%%%%
+The least-squares solution for the estimator vector is
+\begin{eqnarray}
+\bold{\hat{\beta}} &=& \left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\bold{y}
+\end{eqnarray}
+With the estimator vector, the predicted values are:
+\begin{equation}
+\bold{\hat{y}} = \bold{X}\bold{\hat{\beta}} = \bold{X}\left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\bold{y}
+\end{equation}
+%%%%%
+%%%%%
+\subsection{Properties of the Estimators}
+Now, we derive the mean and variance for the estimator. The mean is
+\begin{eqnarray}
+\text{E}(\bold{\hat{\beta}})&=&\text{E}\left[  \left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\bold{y} \right]\nonumber\\
+\end{eqnarray}
+
+The variance is
+\begin{eqnarray}
+\text{Var}(\bold{\hat{\beta}})&=&\text{E}\left[ \left(  \bold{\hat{\beta}}-\text{E}(\bold{\hat{\beta}})  \right)^2 \right]\nonumber\\
+%%%
+&=&\text{E}(\bold{\hat{\beta}}^2) - \text{E}(\bold{\hat{\beta}})\text{E}(\bold{\hat{\beta}})\nonumber\\
+%%%
+&=&\text{E}(\bold{\hat{\beta}}^2) - \beta^2\:\:\:\:\text{since $\text{E}(\bold{\hat{\beta}}) = \beta$}\nonumber\\
+\end{eqnarray}
+
+
+\bibliography{databasens}
+
+\end{document}
