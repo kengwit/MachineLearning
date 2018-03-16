@@ -94,7 +94,7 @@ Var(\bold{A}\bold{u}) &=& E\left[ \left\{  \bold{A}\bold{u}-E(\bold{A}\bold{u}) 
 %%
 &=& \bold{A} E\left[ \left\{ \bold{u} - E(\bold{u}) \right\}^2 \right]\bold{A}^T \nonumber\\
 %%
-&=& \bold{A} Var(\bold{u}) \bold{A}^T 
+&=& \bold{A} Var(\bold{u}) \bold{A}^T
 \label{VarianceProdConstantMatrix}
 \end{eqnarray}
 
@@ -159,7 +159,7 @@ is linear in the inputs $\bold{X}$. This means that \eqref{eqLinearRegressionFun
 &=& \bold{X}\boldsymbol{\beta} + \boldsymbol{\epsilon}\label{eqTrueY}
 \end{eqnarray}
 where $\boldsymbol{\epsilon}$ is the error or residual vector, and it is assumed that each element of $\boldsymbol{\epsilon}$ is normally distributed with zero mean and has (unobserved) variance of $\sigma$, i.e., $\epsilon_i \sim N(0,\sigma^2)$. This means that
-\begin{eqnarray} 
+\begin{eqnarray}
 Var(\boldsymbol{\epsilon}) &=& E(\boldsymbol{\epsilon}^2)\nonumber\\
 &=& E(\boldsymbol{\epsilon}\boldsymbol{\epsilon}^T)\nonumber\\
 &=& \sigma^2\bold{I}\label{VarError}
@@ -195,35 +195,38 @@ E(\boldsymbol{\hat{\beta}}) &=& E\left[  \left(\bold{X}^T\bold{X}\right)^{-1}\bo
 %%
 &=& E\left[  \left(\bold{X}^T\bold{X}\right)^{-1}\left(\bold{X}^T\bold{X}\right)\boldsymbol{\beta} + \left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\boldsymbol{\epsilon} \right]\:\:\:\:\text{using \eqref{eqTrueY}}\nonumber\\
 %%
-&=& \underbrace{E(\boldsymbol{\beta})}_{\beta}+ \left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\underbrace{E(\boldsymbol{\epsilon})}_{\bold{0}}\nonumber\\
+&=& \underbrace{E(\boldsymbol{\beta})}_{\boldsymbol{\beta}}+ \left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\underbrace{E(\boldsymbol{\epsilon})}_{\bold{0}}\nonumber\\
 %%
-&=& \beta \label{MeanEstimatorBeta}
+&=& \boldsymbol{\beta} \label{MeanEstimatorBeta}
 \end{eqnarray}
 The variance is
 \begin{eqnarray}
-Var(\boldsymbol{\hat{\beta}})&=& E\left[ \left\{  \boldsymbol{\hat{\beta}}-E(\boldsymbol{\hat{\beta}})  \right\}^2 \right]\nonumber\\
+Var(\boldsymbol{\hat{\beta}}) &=& E\left[ \left\{  \boldsymbol{\hat{\beta}}-E(\boldsymbol{\hat{\beta}})  \right\} \left\{  \boldsymbol{\hat{\beta}}-E(\boldsymbol{\hat{\beta}})  \right\}^T \right]\nonumber\\
 %%%
-&=& E(\boldsymbol{\hat{\beta}}^2) - E(\boldsymbol{\hat{\beta}})E(\boldsymbol{\hat{\beta}})\nonumber\\
+&=& E\left[\boldsymbol{\hat{\beta}}\boldsymbol{\hat{\beta}}^T - \boldsymbol{\hat{\beta}}E(\boldsymbol{\hat{\beta}})^T  - E(\boldsymbol{\hat{\beta}})\boldsymbol{\hat{\beta}}^T + E(\boldsymbol{\hat{\beta}})E(\boldsymbol{\hat{\beta}})^T\right]\nonumber\\
 %%%
-&=& E(\boldsymbol{\hat{\beta}}^2) - \beta^2\:\:\:\:\text{using \eqref{MeanEstimatorBeta}}\nonumber\\
+&=& E(\boldsymbol{\hat{\beta}}\boldsymbol{\hat{\beta}}^T) - E(\boldsymbol{\hat{\beta}})E(\boldsymbol{\hat{\beta}})^T\nonumber\\
 %%%
-&=& E\left(\left\{\left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\bold{y}\right\}^2\right) - \beta^2\:\:\:\:\text{using \eqref{EstimatorSolution}}\nonumber\\
+&=& E(\boldsymbol{\hat{\beta}}\boldsymbol{\hat{\beta}}^T) - \boldsymbol{\beta}\boldsymbol{\beta}^T\:\:\:\:\text{using \eqref{EstimatorSolution}}\nonumber\\
 %%%
-&=& E\left(\left\{\left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\left(\bold{X}\boldsymbol{\beta} + \boldsymbol{\epsilon}\right)\right\}^2\right) - \beta^2\:\:\:\:\text{using \eqref{eqTrueY}}\nonumber\\
+&=& E\left(\left\{\left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\bold{y}\right\}\left\{\left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\bold{y}\right\}^T\right) - \boldsymbol{\beta}\boldsymbol{\beta}^T\:\:\:\:\text{using \eqref{eqTrueY}}\nonumber\\
 %%%
-&=& E\left(\left\{\boldsymbol{\beta} + \left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\boldsymbol{\epsilon}\right\}^2\right) - \beta^2\nonumber\\
+&=& E\left(\left\{\left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\left(\bold{X}\boldsymbol{\beta} + \boldsymbol{\epsilon}\right)\right\}\left\{\left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\left(\bold{X}\boldsymbol{\beta} + \boldsymbol{\epsilon}\right)\right\}^T\right) - \boldsymbol{\beta}\boldsymbol{\beta}^T\nonumber\\
 %%%
-&=& E\left(\left\{\boldsymbol{\beta} + \left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\boldsymbol{\epsilon}\right\}\left\{\boldsymbol{\beta} + \left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\boldsymbol{\epsilon}\right\}^T\right) - \beta^2\nonumber\\
+&=& E\left(\left\{\boldsymbol{\beta} + \left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\boldsymbol{\epsilon}\right\}\left\{\boldsymbol{\beta} + \left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\boldsymbol{\epsilon}\right\}^T\right) - \boldsymbol{\beta}\boldsymbol{\beta}^T\nonumber\\
 %%%
-&=& E\left(\left\{\boldsymbol{\beta} + \left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\boldsymbol{\epsilon}\right\}\left\{\boldsymbol{\beta}^T + \boldsymbol{\epsilon}^T\left(\left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\right)^T\right\}\right) - \beta^2\nonumber\\
+&=& E\left(\left\{\boldsymbol{\beta} + \left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\boldsymbol{\epsilon}\right\}\left\{\boldsymbol{\beta} + \left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\boldsymbol{\epsilon}\right\}^T\right) - \boldsymbol{\beta}\boldsymbol{\beta}^T\:\:\:\:\text{using \eqref{eqTrueY}}\nonumber\\
 %%%
-&=& E\left(\boldsymbol{\beta}\boldsymbol{\beta}^T  + \boldsymbol{\beta} \boldsymbol{\epsilon}^T\left(\left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\right)^T + \left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\boldsymbol{\epsilon}\boldsymbol{\beta}^T + \left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\boldsymbol{\epsilon}\boldsymbol{\epsilon}^T\left(\left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\right)^T\right)  - \beta^2\nonumber\\
+&=& E\left(\left\{\boldsymbol{\beta} + \left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\boldsymbol{\epsilon}\right\}\left\{\boldsymbol{\beta}^T + \boldsymbol{\epsilon}^T\left(\left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\right)^T\right\}\right) - \boldsymbol{\beta}\boldsymbol{\beta}^T\nonumber\\
 %%%
-&=& E(\boldsymbol{\beta}\boldsymbol{\beta}^T) + E\left(\left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\boldsymbol{\epsilon}\boldsymbol{\epsilon}^T\left(\left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\right)^T\right) - \beta^2\nonumber\\
+&=& E\left(\boldsymbol{\beta}\boldsymbol{\beta}^T  + \boldsymbol{\beta} \boldsymbol{\epsilon}^T\left(\left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\right)^T + \left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\boldsymbol{\epsilon}\boldsymbol{\beta}^T + \left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\boldsymbol{\epsilon}\boldsymbol{\epsilon}^T\left(\left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\right)^T\right) \nonumber\\
+&& - \boldsymbol{\beta}\boldsymbol{\beta}^T\nonumber\\
 %%%
-&=& E(\boldsymbol{\beta}\boldsymbol{\beta}^T) + \left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\left(E(\boldsymbol{\epsilon}\boldsymbol{\epsilon}^T)\right)\left(\left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\right)^T - \beta^2\nonumber\\
+&=& E(\boldsymbol{\beta}\boldsymbol{\beta}^T) + E\left(\left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\boldsymbol{\epsilon}\boldsymbol{\epsilon}^T\left(\left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\right)^T\right) - \boldsymbol{\beta}\boldsymbol{\beta}^T\nonumber\\
 %%%
-&=& \beta^2 + \sigma^2 \left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\left(\left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\right)^T - \beta^2\:\:\:\:\text{using \eqref{VarError} and \eqref{MeanEstimatorBeta}}\nonumber\\
+&=& E(\boldsymbol{\beta}\boldsymbol{\beta}^T) + \left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\left(E(\boldsymbol{\epsilon}\boldsymbol{\epsilon}^T)\right)\left(\left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\right)^T - \boldsymbol{\beta}\boldsymbol{\beta}^T\nonumber\\
+%%%
+&=& \boldsymbol{\beta}\boldsymbol{\beta}^T + \sigma^2 \left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\left(\left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\right)^T - \boldsymbol{\beta}\boldsymbol{\beta}^T\:\:\:\:\text{using \eqref{VarError} and \eqref{MeanEstimatorBeta}}\nonumber\\
 %%%
 &=& \sigma^2 \left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\bold{X}\left(\bold{X}^T\bold{X}\right)^{-T}\nonumber\\
 %%%
