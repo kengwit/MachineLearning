@@ -48,7 +48,7 @@
 %.....Begin Document
 %
 
-\title{Notes on Machine Learning}
+\title{Notes on Linear Regression}
 \author[1]{Keng-Wit Lim\thanks{kengwit@gmail.com}}
 \affil[1]{XXXX Los Angeles, CA, USA}
 
@@ -68,14 +68,41 @@
 %\noindent$\hrulefill$
 
 \section*{Abstract}
-Notes on Machine Learning
+Notes on linear regression.
 
 \noindent$\hrulefill$\\
 Keywords: XXX
 
+\section{Basics}
+Constant matrix $\bold{A}$ and vector $\bold{u}$. Note that variance of a vector results in a matrix:
+\begin{eqnarray}
+Var(\bold{A}\bold{u}) &=& E\left[ \left\{  \bold{A}\bold{u}-E(\bold{A}\bold{u})  \right\}^2 \right]\nonumber\\
+%%
+&=& E\left[ \left\{  \bold{A}\bold{u}-E(\bold{A}\bold{u})  \right\} \left\{ \bold{A}\bold{u}-E(\bold{A}\bold{u})  \right\}^T \right]\nonumber\\
+%%
+&=& E\left[ \left\{  \bold{A}\bold{u}-E(\bold{A}\bold{u})  \right\} \left\{  \bold{u}^T\bold{A}^T-E(\bold{u}^T\bold{A}^T)  \right\} \right]\nonumber\\
+%%
+&=& E\left[ \bold{A}\bold{u} \bold{u}^T\bold{A}^T - \bold{A}\bold{u} E(\bold{u}^T\bold{A}^T) -E(\bold{A}\bold{u})\bold{u}^T\bold{A}^T + E(\bold{A}\bold{u}) E(\bold{u}^T\bold{A}^T) \right]\nonumber\\
+%%
+&=& E(\bold{A}\bold{u} \bold{u}^T\bold{A}^T) - E(\bold{A}\bold{u}) E(\bold{u}^T\bold{A}^T) -E(\bold{A}\bold{u})E(\bold{u}^T\bold{A}^T) + E(\bold{A}\bold{u}) E(\bold{u}^T\bold{A}^T)\nonumber\\
+%%
+&=& \bold{A}E(\bold{u} \bold{u}^T)\bold{A}^T - \bold{A}E(\bold{u}) E(\bold{u}^T)\bold{A}^T - \bold{A}E(\bold{u})E(\bold{u}^T)\bold{A}^T + \bold{A}E(\bold{u}) E(\bold{u}^T)\bold{A}^T\nonumber\\
+%%
+&=& \bold{A} \left[ E(\bold{u} \bold{u}^T) - E(\bold{u}) E(\bold{u}^T) \right]\bold{A}^T \nonumber\\
+%%
+&=& \bold{A} E\left[ \left\{ \bold{u} - E(\bold{u}) \right\} \left\{ \bold{u} - E(\bold{u}) \right\}^T \right]\bold{A}^T \nonumber\\
+%%
+&=& \bold{A} E\left[ \left\{ \bold{u} - E(\bold{u}) \right\}^2 \right]\bold{A}^T \nonumber\\
+%%
+&=& \bold{A} Var(\bold{u}) \bold{A}^T 
+\label{VarianceProdConstantMatrix}
+\end{eqnarray}
+
+\clearpage
+
 \section{Notation}
 \begin{eqnarray}
-\bold{y} = 
+\bold{y} =
 \left\{
 \begin{array}{c}
 y_1\\
@@ -116,58 +143,96 @@ The following assumptions will allow us to draw inferences about the estimators 
 \begin{enumerate}
 \item A linear regression model assumes that the regression function
 \begin{eqnarray}
-f(\bold{X}) &=& \text{E}(\bold{y}|\bold{X})\nonumber\\
+f(\bold{X}) &=& E(\bold{y}|\bold{X})\nonumber\\
 %%
 &=& \beta_0 + \sum_{j=1}^p X_{ij}\beta_j\nonumber\\
 %%
-&=& \bold{X}\bold{\beta}\label{eqLinearRegressionFunction}
+&=& \bold{X}\boldsymbol{\beta}\label{eqLinearRegressionFunction}
 \end{eqnarray}
-is linear in the inputs $\bold{X}$. This means that \eqref{eqLinearRegressionFunction} is assumed to be the correct model for the mean and that the conditional expectation of $\text{E}(\bold{y}|\bold{X})$ is linear in $X_1,\hdots,X_p$.
+is linear in the inputs $\bold{X}$. This means that \eqref{eqLinearRegressionFunction} is assumed to be the correct model for the mean and that the conditional expectation of $E(\bold{y}|\bold{X})$ is linear in $X_1,\hdots,X_p$.
 %%%%
 %%%%
 \item The \emph{true} relation between a quantitative response $\bold{y}$ on the basis of predictors $\bold{X}$ is assumed to take the form
 \begin{eqnarray}
-\bold{y} &=& \text{E}(\bold{y}|\bold{X}) + \boldsymbol{\epsilon}\nonumber\\
+\bold{y} &=& E(\bold{y}|\bold{X}) + \boldsymbol{\epsilon}\nonumber\\
 %%
-&=& \bold{X}\bold{\beta} + \boldsymbol{\epsilon}\label{eqTrueY}
+&=& \bold{X}\boldsymbol{\beta} + \boldsymbol{\epsilon}\label{eqTrueY}
 \end{eqnarray}
-where $\boldsymbol{\epsilon}$ is the error or residual vector, and it is assumed that $\boldsymbol{\epsilon} \sim N(\bold{0},\boldsymbol{\sigma})$ i.e. vector of zero mean and vector of (unobserved) variance $\boldsymbol{\sigma}$. The assumed relation \eqref{eqTrueY} means that the deviations of $\bold{y}$ around its expectation are additive and Gaussian.
+where $\boldsymbol{\epsilon}$ is the error or residual vector, and it is assumed that each element of $\boldsymbol{\epsilon}$ is normally distributed with zero mean and has (unobserved) variance of $\sigma$, i.e., $\epsilon_i \sim N(0,\sigma^2)$. This means that
+\begin{eqnarray} 
+Var(\boldsymbol{\epsilon}) &=& E(\boldsymbol{\epsilon}^2)\nonumber\\
+&=& E(\boldsymbol{\epsilon}\boldsymbol{\epsilon}^T)\nonumber\\
+&=& \sigma^2\bold{I}\label{VarError}
+\end{eqnarray}
+where $\bold{I}$ is the $N \times N$ identity matrix. The assumed relation \eqref{eqTrueY} means that the deviations of $\bold{y}$ around its expectation are additive and Gaussian.
 \end{enumerate}
 %%%%
 %%%%
 \subsection{Solution for the Estimators}
 In linear regression, we assume that there is approximately a linear relation between $\bold{y}$ and $\bold{X}$:
 \begin{eqnarray}
-\bold{y} &\approx& \bold{X}\bold{\beta}
+\bold{y} &\approx& \bold{X}\boldsymbol{\beta}
 \end{eqnarray}
 %%%%%
 %%%%%
 The least-squares solution for the estimator vector is
 \begin{eqnarray}
-\bold{\hat{\beta}} &=& \left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\bold{y}
+\boldsymbol{\hat{\beta}} &=& \left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\bold{y}
+\label{EstimatorSolution}
 \end{eqnarray}
 With the estimator vector, the predicted values are:
 \begin{equation}
-\bold{\hat{y}} = \bold{X}\bold{\hat{\beta}} = \bold{X}\left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\bold{y}
+\bold{\hat{y}} = \bold{X}\boldsymbol{\hat{\beta}} = \bold{X}\left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\bold{y}
 \end{equation}
 %%%%%
 %%%%%
 \subsection{Properties of the Estimators}
 Now, we derive the mean and variance for the estimator. The mean is
 \begin{eqnarray}
-\text{E}(\bold{\hat{\beta}})&=&\text{E}\left[  \left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\bold{y} \right]\nonumber\\
+E(\boldsymbol{\hat{\beta}}) &=& E\left[  \left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\bold{y} \right]\nonumber\\
+%%
+&=& E\left[  \left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\left(\bold{X}\boldsymbol{\beta} + \boldsymbol{\epsilon}\right) \right]\:\:\:\:\text{using \eqref{eqTrueY}}\nonumber\\
+%%
+&=& E\left[  \left(\bold{X}^T\bold{X}\right)^{-1}\left(\bold{X}^T\bold{X}\right)\boldsymbol{\beta} + \left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\boldsymbol{\epsilon} \right]\:\:\:\:\text{using \eqref{eqTrueY}}\nonumber\\
+%%
+&=& \underbrace{E(\boldsymbol{\beta})}_{\beta}+ \left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\underbrace{E(\boldsymbol{\epsilon})}_{\bold{0}}\nonumber\\
+%%
+&=& \beta \label{MeanEstimatorBeta}
 \end{eqnarray}
-
 The variance is
 \begin{eqnarray}
-\text{Var}(\bold{\hat{\beta}})&=&\text{E}\left[ \left(  \bold{\hat{\beta}}-\text{E}(\bold{\hat{\beta}})  \right)^2 \right]\nonumber\\
+Var(\boldsymbol{\hat{\beta}})&=& E\left[ \left\{  \boldsymbol{\hat{\beta}}-E(\boldsymbol{\hat{\beta}})  \right\}^2 \right]\nonumber\\
 %%%
-&=&\text{E}(\bold{\hat{\beta}}^2) - \text{E}(\bold{\hat{\beta}})\text{E}(\bold{\hat{\beta}})\nonumber\\
+&=& E(\boldsymbol{\hat{\beta}}^2) - E(\boldsymbol{\hat{\beta}})E(\boldsymbol{\hat{\beta}})\nonumber\\
 %%%
-&=&\text{E}(\bold{\hat{\beta}}^2) - \beta^2\:\:\:\:\text{since $\text{E}(\bold{\hat{\beta}}) = \beta$}\nonumber\\
+&=& E(\boldsymbol{\hat{\beta}}^2) - \beta^2\:\:\:\:\text{using \eqref{MeanEstimatorBeta}}\nonumber\\
+%%%
+&=& E\left(\left\{\left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\bold{y}\right\}^2\right) - \beta^2\:\:\:\:\text{using \eqref{EstimatorSolution}}\nonumber\\
+%%%
+&=& E\left(\left\{\left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\left(\bold{X}\boldsymbol{\beta} + \boldsymbol{\epsilon}\right)\right\}^2\right) - \beta^2\:\:\:\:\text{using \eqref{eqTrueY}}\nonumber\\
+%%%
+&=& E\left(\left\{\boldsymbol{\beta} + \left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\boldsymbol{\epsilon}\right\}^2\right) - \beta^2\nonumber\\
+%%%
+&=& E\left(\left\{\boldsymbol{\beta} + \left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\boldsymbol{\epsilon}\right\}\left\{\boldsymbol{\beta} + \left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\boldsymbol{\epsilon}\right\}^T\right) - \beta^2\nonumber\\
+%%%
+&=& E\left(\left\{\boldsymbol{\beta} + \left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\boldsymbol{\epsilon}\right\}\left\{\boldsymbol{\beta}^T + \boldsymbol{\epsilon}^T\left(\left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\right)^T\right\}\right) - \beta^2\nonumber\\
+%%%
+&=& E\left(\boldsymbol{\beta}\boldsymbol{\beta}^T  + \boldsymbol{\beta} \boldsymbol{\epsilon}^T\left(\left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\right)^T + \left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\boldsymbol{\epsilon}\boldsymbol{\beta}^T + \left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\boldsymbol{\epsilon}\boldsymbol{\epsilon}^T\left(\left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\right)^T\right)  - \beta^2\nonumber\\
+%%%
+&=& E(\boldsymbol{\beta}\boldsymbol{\beta}^T) + E\left(\left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\boldsymbol{\epsilon}\boldsymbol{\epsilon}^T\left(\left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\right)^T\right) - \beta^2\nonumber\\
+%%%
+&=& E(\boldsymbol{\beta}\boldsymbol{\beta}^T) + \left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\left(E(\boldsymbol{\epsilon}\boldsymbol{\epsilon}^T)\right)\left(\left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\right)^T - \beta^2\nonumber\\
+%%%
+&=& \beta^2 + \sigma^2 \left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\left(\left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\right)^T - \beta^2\:\:\:\:\text{using \eqref{VarError} and \eqref{MeanEstimatorBeta}}\nonumber\\
+%%%
+&=& \sigma^2 \left(\bold{X}^T\bold{X}\right)^{-1}\bold{X}^T\bold{X}\left(\bold{X}^T\bold{X}\right)^{-T}\nonumber\\
+%%%
+&=& \sigma^2 \left(\bold{X}^T\bold{X}\right)^{-T}\nonumber\\
+%%%
+&=& \sigma^2 \left(\bold{X}^T\bold{X}\right)^{-1}\label{VarEstimator}
 \end{eqnarray}
 
 
 \bibliography{databasens}
 
-\end{document}
+\end{document} 
