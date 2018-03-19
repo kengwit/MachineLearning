@@ -199,7 +199,7 @@ E(\boldsymbol{\hat{\beta}}) &=& E\left[  \left(\bold{X}^T\bold{X}\right)^{-1}\bo
 %%
 &=& \boldsymbol{\beta} \label{MeanEstimatorBeta}
 \end{eqnarray}
-The variance is
+The variance (variance-covariance matrix) is
 \begin{eqnarray}
 Var(\boldsymbol{\hat{\beta}}) &=& E\left[ \left\{  \boldsymbol{\hat{\beta}}-E(\boldsymbol{\hat{\beta}})  \right\} \left\{  \boldsymbol{\hat{\beta}}-E(\boldsymbol{\hat{\beta}})  \right\}^T \right]\nonumber\\
 %%%
@@ -232,8 +232,54 @@ Var(\boldsymbol{\hat{\beta}}) &=& E\left[ \left\{  \boldsymbol{\hat{\beta}}-E(\b
 %%%
 &=& \sigma^2 \left(\bold{X}^T\bold{X}\right)^{-T}\nonumber\\
 %%%
-&=& \sigma^2 \left(\bold{X}^T\bold{X}\right)^{-1}\label{VarEstimator}
+&=& \sigma^2 \left(\bold{X}^T\bold{X}\right)^{-1}\label{VarEstimator}\\
+%%%
+&=& 
+\left[
+\begin{array}{cccc}
+var(\hat{\beta}_0) & cov(\hat{\beta}_0,\hat{\beta}_1) & \hdots & cov(\hat{\beta}_0,\hat{\beta}_{p})\\
+cov(\hat{\beta}_1,\hat{\beta}_0) & var(\hat{\beta}_1) & \hdots & cov(\hat{\beta}_1,\hat{\beta}_{p})\\
+\vdots & \vdots & \hdots & \vdots \\
+cov(\hat{\beta}_p,\hat{\beta}_0) &  cov(\hat{\beta}_p,\hat{\beta}_1)& \hdots & var(\hat{\beta}_p)
+\end{array} 
+\right]
+\label{VarEstimatorMatrixForm}
 \end{eqnarray}
+so that 
+\begin{eqnarray}
+var(\hat{\beta}_j)&=& \sigma^2 \left(\bold{X}^T\bold{X}\right)^{-1}
+\end{eqnarray}
+Denote $v_j$ as the $j$-th diagonal element of $\left(\bold{X}^T\bold{X}\right)^{-1}$ so that
+\begin{eqnarray}
+var(\hat{\beta}_j) &=& \sigma^2 v_j = \sigma^2 \left(\bold{X}^T\bold{X}\right)^{-1}_{jj}\label{VarianceEstimatorDiag}
+\end{eqnarray}
+$\bold{X}^T\bold{X}$ measures the spread so that as the spread increases, the variance of the estimator decreases (check this statement).
+
+\subsection{Hypothesis testing}
+For linear regression, the chief statements of the hypothesis test are expressed as
+\begin{eqnarray}
+H_0: \beta_1 = 0\nonumber\\
+H_1: \beta_1 \ne 0
+\end{eqnarray}
+In this case, the hypothesis tests for the significance of regression. In other words, the test indicates if the fitted regression model is of value in explaining variations in the observations or if you are trying to impose a regression model when no true relationship exists between $\bold{x}$ and $\bold{Y}$. Failure to reject $H_0: \beta_1 = 0$ implies that no linear relationship exists between $\bold{x}$ and $\bold{Y}$. This result may be obtained when the scatter plots of against are as shown in (a) of the following figure and (b) of the following figure. (a) represents the case where no model exits for the observed data. In this case you would be trying to fit a regression model to noise or random variation. (b) represents the case where the true relationship between $\bold{x}$ and $\bold{Y}$ is not linear. (c) and (d) represent the case when $H_0: \beta_1 = 0$ is rejected, implying that a model does exist between $\bold{x}$ and $\bold{Y}$. (c) represents the case where the linear model is sufficient. In the following figure, (d) represents the case where a higher order model may be needed.
+
+First we need to say something about the variance of the estimators. Usually the actual variance $\sigma$ is not known and it is estimated as
+\begin{eqnarray}
+\hat{\sigma}^2 &=&\dfrac{1}{N-(p+1)}\sum_{i=1}^N(y_i-\hat{y}_i)^2
+\end{eqnarray}
+Then from \eqref{VarianceEstimatorDiag}, the estimate of the variance of the $j$-th estimator is
+\begin{eqnarray}
+var(\hat{\beta}_j) &\approx& \hat{\sigma}^2 v_j = \hat{\sigma}^2 \left(\bold{X}^T\bold{X}\right)^{-1}_{jj}\label{VarianceEstimatorDiagEstimate}
+\end{eqnarray}
+For hypothesis testing, we first calculate the Z-score of the $j$-the estimator
+\begin{eqnarray}
+z_j &=&\dfrac{\hat{\beta}_j - \beta_j}{\sqrt{var(\hat{\beta}_j)}}\nonumber\\
+%%
+&=&\dfrac{\hat{\beta}_j}{\hat{\sigma} \sqrt{v_j}}
+\end{eqnarray}
+since $\beta_j = 0$ (the null hypothesis).
+
+Since we do not know the actual variance and we use an estimate of the variance, the appropriate distribution to be used would be the $t$ distribution with $N-(p+1)$ degrees of freedom $t_{N-(p+1)}$ (as opposed to a normal distribution); a large (absolute) value of $z_j$ will lead to rejection of $H_0: \beta_1 = 0$. Note: as the sample size increases, the difference between the tail quantiles of a $t$-distribution and a normal distribution becomes negligible.
 
 
 \bibliography{databasens}
