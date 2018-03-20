@@ -59,8 +59,9 @@ batch_size = n_samples
 model = tf.add(tf.multiply(X, W), b)
 
 # Minimize squared errors
-loss = tf.reduce_sum(tf.pow(model - Y, 2))/(2 * n_samples) # L2 loss
-#loss = tf.reduce_mean(tf.square(Y-model))
+#loss = tf.reduce_sum(tf.square(Y-model)) # this is the residual sum-of-squares (RSS), but can be unstable 
+#loss = tf.reduce_sum(tf.pow(Y-model, 2))/(2 * n_samples) 
+loss = 0.5*tf.reduce_mean(tf.square(Y-model)) # same as second one above, but without divide by 2
 optimizer = tf.train.GradientDescentOptimizer(learning_rate).minimize(loss) #Gradient descent
 
 # Initialize variables
