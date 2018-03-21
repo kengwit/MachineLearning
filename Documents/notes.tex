@@ -234,26 +234,47 @@ Var(\boldsymbol{\hat{\beta}}) &=& E\left[ \left\{  \boldsymbol{\hat{\beta}}-E(\b
 %%%
 &=& \sigma^2 \left(\bold{X}^T\bold{X}\right)^{-1}\label{VarEstimator}\\
 %%%
-&=& 
+&=&
 \left[
 \begin{array}{cccc}
 var(\hat{\beta}_0) & cov(\hat{\beta}_0,\hat{\beta}_1) & \hdots & cov(\hat{\beta}_0,\hat{\beta}_{p})\\
 cov(\hat{\beta}_1,\hat{\beta}_0) & var(\hat{\beta}_1) & \hdots & cov(\hat{\beta}_1,\hat{\beta}_{p})\\
 \vdots & \vdots & \hdots & \vdots \\
 cov(\hat{\beta}_p,\hat{\beta}_0) &  cov(\hat{\beta}_p,\hat{\beta}_1)& \hdots & var(\hat{\beta}_p)
-\end{array} 
+\end{array}
 \right]
 \label{VarEstimatorMatrixForm}
-\end{eqnarray}
-so that 
-\begin{eqnarray}
-var(\hat{\beta}_j)&=& \sigma^2 \left(\bold{X}^T\bold{X}\right)^{-1}
 \end{eqnarray}
 Denote $v_j$ as the $j$-th diagonal element of $\left(\bold{X}^T\bold{X}\right)^{-1}$ so that
 \begin{eqnarray}
 var(\hat{\beta}_j) &=& \sigma^2 v_j = \sigma^2 \left(\bold{X}^T\bold{X}\right)^{-1}_{jj}\label{VarianceEstimatorDiag}
 \end{eqnarray}
 $\bold{X}^T\bold{X}$ measures the spread so that as the spread increases, the variance of the estimator decreases (check this statement).
+
+Based on the above, we have
+\begin{eqnarray}
+\boldsymbol{\hat{\beta}}\sim N(\boldsymbol{\beta},\sigma^2 \left(\bold{X}^T\bold{X}\right)^{-1})
+\label{NormallyDistributedBetaHat}
+\end{eqnarray}
+(How do you know that it is normally distributed? Based on properties of sum and multiplication by a constant for normal distributions?).
+
+\subsection{The Chi-Squared Distribution}\label{SectionChiSquare}
+A chi-square random variable is the result of squaring Normal random variables.  Let $Y\sim N(0,1)$. We call this a standard normal random variable. What happens when we square $Y$?  Let $Z=Y^2$.  Then Z is a chi-square random variable with 1 degree of freedom (df).  We can write this as:
+\begin{eqnarray}
+Z=Y^2 \sim \chi_1^2
+\end{eqnarray}
+where the subscript 1 means that there is 1 df.
+
+The more general chi-squared distribution, with different degrees of freedom, is obtained by summing up the squares of independent, normally distributed random variables.
+Let $Y_1,\hdots,Y_d\overset{\mathrm{iid}}{\sim}N(0,1)$ be $d$ independent standard normal random variables. If we square them all and then sum them up we get a Chi-square random variable with d degrees of freedom.
+\begin{eqnarray}
+W&=&Y_1^2+Y_2^2+\hdots+Y_d^2\nonumber\\
+W&\sim&\chi_d^2
+\end{eqnarray}
+We would say this as "W comes from a chi-squared distribution with d degrees of freedom."  Note that the chi-square distribution has a pdf, just like the Normal distribution; those interested can find out much more about the chi-square distribution by looking at the relevant Wikipedia page.  It will be helpful to know the mean of a chi-square random variable, which is equal to the degrees of freedom:
+\begin{eqnarray}
+\text{If $W\sim\chi_d^2$, then $E(W)=d$}    
+\end{eqnarray}
 
 \subsection{Hypothesis testing}
 For linear regression, the chief statements of the hypothesis test are expressed as
@@ -281,6 +302,23 @@ since $\beta_j = 0$ (the null hypothesis).
 
 Since we do not know the actual variance and we use an estimate of the variance, the appropriate distribution to be used would be the $t$ distribution with $N-(p+1)$ degrees of freedom $t_{N-(p+1)}$ (as opposed to a normal distribution); a large (absolute) value of $z_j$ will lead to rejection of $H_0: \beta_1 = 0$. Note: as the sample size increases, the difference between the tail quantiles of a $t$-distribution and a normal distribution becomes negligible.
 
+
+\subsection{Confidence Interval or Set}
+Recall from \eqref{NormallyDistributedBetaHat} that
+\begin{eqnarray}
+\boldsymbol{\hat{\beta}}\sim N(\boldsymbol{\beta},\sigma^2 \left(\bold{X}^T\bold{X}\right)^{-1})
+\end{eqnarray}
+If one isolates $\beta_j$, we have
+\begin{eqnarray}
+&&\hat{\beta}_j - \beta_j \sim N(0,\sigma^2 v_j )\:\:\:\:\text{using \eqref{VarianceEstimatorDiag}}\nonumber\\
+&\rightarrow&\dfrac{\hat{\beta}_j - \beta_j}{\sigma \sqrt{v_j}} \sim \dfrac{1}{\sigma \sqrt{v_j}}N(0,\sigma^2 v_j )\nonumber\\
+&\rightarrow&\dfrac{\hat{\beta}_j - \beta_j}{\sigma \sqrt{v_j}} \sim N(0,1)
+\end{eqnarray}
+Based on the discussion in Section \ref{SectionChiSquare}, we have
+\begin{eqnarray}
+&&\left(\dfrac{\hat{\beta}_j - \beta_j}{\sigma \sqrt{v_j}}\right)^2 \sim \chi_1^2\nonumber\\
+&\rightarrow&\left(\dfrac{\hat{\beta}_j - \beta_j}{\sqrt{v_j}}\right)^2 \sim \sigma^2\chi_1^2
+\end{eqnarray}
 
 \bibliography{databasens}
 
