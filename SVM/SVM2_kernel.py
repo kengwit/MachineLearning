@@ -23,9 +23,17 @@ prediction_grid = tf.placeholder(shape=[None,2],dtype=tf.float32)
 b = tf.Variable(tf.random_normal(shape=[1,batch_size]))
 
 # create Gaussian kernel
+# distance is a vector having components:
+# x_vals[0][0]**2+x_vals[0][1]**2
+# x_vals[1][0]**2+x_vals[1][1]**2
+#   ....
+# x_vals[n][0]**2+x_vals[n][1]**2
 gamma = tf.constant(-50.0)
 dist = tf.reduce_sum(tf.square(x_data),1)
 dist = tf.reshape(dist,[-1,1])
+
+# checking
+#temp1 = sess.run(dist,feed_dict={x_data: x_vals})
 
 
 # plot
