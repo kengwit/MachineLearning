@@ -49,9 +49,10 @@ loss = tf.negative(tf.subtract(first_term,second_term))
 # prediction = we have the kernel of the points with the prediction data
 rA = tf.reshape(tf.reduce_sum(tf.square(x_data),axis=1),[-1,1])
 rB = tf.reshape(tf.reduce_sum(tf.square(prediction_grid),axis=1),[-1,1,1])
-
 pred_sq_dist = tf.add(tf.subtract(rA,tf.multiply(2.,tf.matmul(x_data,tf.transpose(prediction_grid)))),tf.transpose(rB))
 pred_kernel = tf.exp(tf.multiply(gamma,tf.abs(pred_sq_dist)))
+
+#prediction_output = tf.matmul(tf.multiply(tf.transpose(y_target),b),pred_kernel)
 prediction_output = tf.multiply(tf.matmul(tf.transpose(y_target),b),pred_kernel)
 prediction = tf.sign(prediction_output-tf.reduce_mean(prediction_output))
 accuracy = tf.reduce_mean(tf.cast(tf.equal(tf.squeeze(prediction),tf.squeeze(y_target)),tf.float32))
@@ -74,7 +75,8 @@ for i in range(500):
     temp_loss = sess.run( loss,feed_dict={x_data: rand_x, y_target: rand_y})
     loss_vec.append(temp_loss)
     
-    #acc_temp = sess.run(accuracy,feed_dict={x_data: rand_x, y_target: rand_y, prediction_grid: rand_x})
+    # some problem here
+    acc_temp = sess.run(accuracy,feed_dict={x_data: rand_x, y_target: rand_y, prediction_grid: rand_x} )
     #batch_accuracy.append(acc_temp)
     
     if ( i+1 )%100 == 0:
