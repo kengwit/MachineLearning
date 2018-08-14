@@ -34,8 +34,55 @@ dist = tf.reshape(dist,[-1,1])
 
 # checking
 #temp1 = sess.run(dist,feed_dict={x_data: x_vals})
+sq_dists = tf.add( tf.subtract(dist, tf.multiply(2.,tf.matmul(x_data,tf.transpose(x_data)))), tf.transpose(dist))
+my_kernel = tf.exp(tf.multiply(gamma,tf.abs(sq_dists)))
 
+# declare dual problem
+model_output = tf.matmul(b,my_kernel)
+first_term   = tf.reduce_sum(b)
+b_vec_cross  = tf.matmul(tf.transpose(b),b)
+y_target_cross = tf.matmul(y_target, tf.transpose(y_target))
+second_term = tf.reduce_sum(tf.multiply(my_kernel,tf.multiply(b_vec_cross,y_target_cross)))
+loss = tf.negative(tf.subtract(first_term,second_term))
 
+# create prediction and accuracy functions
+# prediction = we have the kernel of the points with the prediction data
+rA = tf.reshape(tf.reduce_sum(tf.square(x_data),axis=1),[-1,1])
+rB = tf.reshape(tf.reduce_sum(tf.square(prediction_grid),axis=1),[-1,1,1])
+
+pred_sq_dist = tf.add(tf.subtract(rA,tf.multiply(2.,tf.matmul(x_data,tf.transpose(prediction_grid)))),tf.transpose(rB))
+pred_kernel = tf.exp(tf.multiply(gamma,tf.abs(pred_sq_dist)))
+prediction_output = tf.multiply(tf.matmul(tf.transpose(y_target),b),pred_kernel)
+prediction = tf.sign(prediction_output-tf.reduce_mean(prediction_output))
+accuracy = tf.reduce_mean(tf.cast(tf.equal(tf.squeeze(prediction),tf.squeeze(y_target)),tf.float32))
+
+# create optimizer
+my_opt = tf.train.GradientDescentOptimizer(0.001)
+train_step = my_opt.minimize(loss)
+init = tf.global_variables_initializer()
+sess.run(init)
+
+# training loop
+loss_vec = []
+batch_accuracy = []
+for i in range(500):
+    rand_index = np.random.choice(len(x_vals),size=batch_size)
+    rand_x = x_vals[rand_index]
+    rand_y = np.transpose([y_vals[rand_index]])
+    sess.run(train_step,feed_dict={x_data: rand_x, y_target: rand_y})
+    
+    temp_loss = sess.run( loss,feed_dict={x_data: rand_x, y_target: rand_y})
+    loss_vec.append(temp_loss)
+    
+    #acc_temp = sess.run(accuracy,feed_dict={x_data: rand_x, y_target: rand_y, prediction_grid: rand_x})
+    #batch_accuracy.append(acc_temp)
+    
+    if ( i+1 )%100 == 0:
+        print('Step #' + str(i+1) )
+        print('Loss = ' + str(temp_loss) )
+              
+
+    
 # plot
 plt.plot(class1_x,class1_y,'ro',label='Class 1')
 plt.plot(class2_x,class2_y,'kx',label='Class 2')
@@ -44,8 +91,6 @@ plt.legend(loc='lower right')
 plt.ylim([-1.5,1.5])
 plt.xlim([-1.5,1.5])
 plt.show()
-
-
 
 
 
