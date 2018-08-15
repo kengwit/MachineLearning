@@ -20,7 +20,7 @@ batch_size = 250
 x_data = tf.placeholder(shape=[None,2],dtype=tf.float32)
 y_target = tf.placeholder(shape=[None,1],dtype=tf.float32)
 prediction_grid = tf.placeholder(shape=[None,2],dtype=tf.float32)
-b = tf.Variable(tf.random_normal(shape=[1,batch_size]))
+b = tf.Variable(tf.random_normal(shape=[1,batch_size])) # note: b here are Lagrange multipliers not the intercept
 
 # create Gaussian kernel
 # distance is a vector having components:
@@ -54,7 +54,10 @@ pred_kernel = tf.exp(tf.multiply(gamma,tf.abs(pred_sq_dist)))
 
 prediction_output = tf.matmul(tf.multiply(tf.transpose(y_target),b),pred_kernel)
 #prediction_output = tf.multiply(tf.matmul(tf.transpose(y_target),b),pred_kernel)
+
+#note: the subtraction of reduce_mean below enforces values between -1 and 1
 prediction = tf.sign(prediction_output-tf.reduce_mean(prediction_output))
+
 accuracy = tf.reduce_mean(tf.cast(tf.equal(tf.squeeze(prediction),tf.squeeze(y_target)),tf.float32))
 
 # create optimizer
