@@ -2,6 +2,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
 from sklearn import datasets
+from tensorflow.python.framework import ops 
+ops.reset_default_graph() 
 
 sess = tf.Session()
 
@@ -56,23 +58,31 @@ def reshape_matmul(mat):
 # y_target has dimensions 3 * batch_size 
 #    
 model_output = tf.matmul(b,my_kernel)
-first_term   = tf.reduce_sum(b,axis=1) # should have axis=1
+first_term   = tf.reduce_sum(b,1) # should have 3 numbers
 # note: 
 # b_vec_cross is a square matrix of size ( batch_size * batch_size )
 # y_target_cross is a matrix of size ( 3 * batch_size )
 b_vec_cross  = tf.matmul(tf.transpose(b),b)
 y_target_cross = reshape_matmul(y_target)
-
 # -------------------
 # change 3 below
 # note: temp below has dimensions 3 * batch_size * batch_size
 # i.e. 3 square matrices, each with size ( batch_size * batch_size )
 # the dimensions/indices to reduce are therefore 1 and 2
 # -------------------
-temp = tf.multiply(my_kernel,tf.multiply(b_vec_cross,y_target_cross))
-second_term = tf.reduce_sum(temp,[1,2]) 
+#temp = tf.multiply(my_kernel,tf.multiply(b_vec_cross,y_target_cross))
+#second_term = tf.reduce_sum(temp,[1,2]) 
+#loss = tf.reduce_sum( tf.negative(tf.subtract(first_term,second_term)) )
+
+
+# alternatively, use batch multiplication 
+yb_vec = tf.multiply(y_target,b) # 3 * batch_size
+K_times_yb = tf.matmul(my_kernel,tf.transpose(yb_vec)) # batch_size * 3
+ybT_Kb_yb = tf.matmul( yb_vec, K_times_yb )
+second_term = tf.reduce_sum(ybT_Kb_yb)
 loss = tf.reduce_sum( tf.negative(tf.subtract(first_term,second_term)) )
 
+#num1 = tf.matmul(yb_vec[0],tf.reshape(K_times_yb[:,0],[3,50])
 
 # create prediction and accuracy functions
 # prediction = we have the kernel of the points with the prediction data
@@ -81,8 +91,10 @@ rB = tf.reshape(tf.reduce_sum(tf.square(prediction_grid),axis=1),[-1,1])
 pred_sq_dist = tf.add(tf.subtract(rA,tf.multiply(2.,tf.matmul(x_data,tf.transpose(prediction_grid)))),tf.transpose(rB))
 pred_kernel = tf.exp(tf.multiply(gamma,tf.abs(pred_sq_dist)))
 prediction_output = tf.matmul(tf.multiply(y_target,b),pred_kernel)
+#prediction_output = tf.expand_dims(tf.reduce_sum(prediction_output,axis=1),1)
 #note: the subtraction of reduce_mean below enforces values between -1 and 1
-prediction = tf.argmax(prediction_output-tf.expand_dims(tf.reduce_mean(prediction_output,axis=1),1),0)
+po_mean = tf.expand_dims(tf.reduce_mean(prediction_output,axis=1),1)
+prediction = tf.argmax(prediction_output-po_mean,0)
 accuracy = tf.reduce_mean(tf.cast(tf.equal(prediction,tf.argmax(y_target,0)),tf.float32))
 
 # Declare optimizer 
@@ -98,13 +110,15 @@ sess.run(init)
 # Training loop 
 loss_vec = [] 
 batch_accuracy = [] 
-for i in range(100): 
+for i in range(400): 
     rand_index = np.random.choice(len(x_vals), size=batch_size) 
     rand_x = x_vals[rand_index] 
     rand_y = y_vals[:, rand_index] 
-    sess.run(train_step, feed_dict={x_data: rand_x, y_target: rand_y}) 
+    fd = feed_dict={x_data: rand_x, y_target: rand_y}
+    
+    sess.run(train_step, fd) 
      
-    temp_loss = sess.run(loss, feed_dict={x_data: rand_x, y_target: rand_y}) 
+    temp_loss = sess.run(loss, fd) 
     loss_vec.append(temp_loss) 
      
     acc_temp = sess.run(accuracy, feed_dict={x_data: rand_x, 
@@ -123,9 +137,9 @@ y_min, y_max = x_vals[:, 1].min() - 1, x_vals[:, 1].max() + 1
 xx, yy = np.meshgrid(np.arange(x_min, x_max, 0.02), 
                      np.arange(y_min, y_max, 0.02)) 
 grid_points = np.c_[xx.ravel(), yy.ravel()] 
-grid_predictions = sess.run(prediction, feed_dict={x_data: rand_x, 
-                                                   y_target: rand_y, 
-                                                   prediction_grid: grid_points}) 
+
+fd2 = feed_dict={x_data: rand_x, y_target: rand_y, prediction_grid: grid_points}
+grid_predictions = sess.run(prediction, fd2) 
 grid_predictions = grid_predictions.reshape(xx.shape) 
 
 
