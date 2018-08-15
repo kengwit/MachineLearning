@@ -2,6 +2,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
 from sklearn import datasets
+from tensorflow.python.framework import ops
+ops.reset_default_graph()
 
 def normalize(array):
     return (array - array.mean()) / array.std()
