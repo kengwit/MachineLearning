@@ -12,8 +12,8 @@ import part
 # Parameters
 # note: X-Y plane is plan view
 BlockXDim = 120. # longitudinal
-BlockYDim = 60.  # width
-BlockZDim = 60.  # vertical depth
+BlockYDim = 100.  # width
+BlockZDim = 100.  # vertical depth
 								
 								
 #-----------------------------------------------------
@@ -24,7 +24,7 @@ myModel = mdb.Model(name='geomodel')
 
 # Create a new viewport in which to display the model
 # and the results of the analysis.
-myViewport = session.Viewport(name='geomodel', origin=(20, 20), width=150, height=120)
+#myViewport = session.Viewport(name='geomodel', origin=(20, 20), width=150, height=120)
     
 
 
@@ -67,10 +67,11 @@ a.translate(instanceList=('Block-1', ), vector=(0.0, 0.0, -0.5*BlockZDim))
 
 # Create the tunnel instance
 #a1 = mdb.models['geomodel'].rootAssembly
-a.InstanceFromBooleanCut(name='tunnel', 
-    instanceToBeCut=a1.instances['Block-1'], 
-    cuttingInstances=(a1.instances['Cylinder-1'],), 
+a.InstanceFromBooleanCut(name='bore', 
+    instanceToBeCut=a.instances['Block-1'], 
+    cuttingInstances=(a.instances['Cylinder-1'],), 
     originalInstances=SUPPRESS)
 	
 # Rotate entire tunnel assembly so that Z is now along the vertical
-#a.rotateAboutAxis(instanceList=('tunnel', ), axisPoint=(0.0, 0.0, 0.0), axisDirection= , angle)
+a.rotate(instanceList=('bore-1', ), axisPoint=(0.0, 0.0, 0.0), axisDirection=(1.0, 0.0, 0.0), angle=90.)
+#a.rotate(instanceList=('tunnel-1', ), axisPoint=(-60.0, -30.0, 30.0), axisDirection=(120.0, 0.0, 0.0), angle=90.0)
