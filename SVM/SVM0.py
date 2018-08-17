@@ -31,10 +31,18 @@ b = tf.Variable( tf.random_normal(shape=[1,1]) )
 model_output = tf.subtract(tf.matmul(x_data,A),b)
 
 # maximum margin loss
-l2_norm = tf.reduce_sum( tf.square(A) )
-alpha = tf.constant([0.1])
-classification_term = tf.reduce_mean(tf.maximum(0.,tf.subtract(1.,tf.multiply(model_output,y_target))))
-loss = tf.add(classification_term,tf.multiply(alpha,l2_norm))
+#l2_norm = tf.reduce_sum( tf.square(A) )
+#alpha = tf.constant([0.1])
+#classification_term = tf.reduce_mean(tf.maximum(0.,tf.subtract(1.,tf.multiply(model_output,y_target))))
+#loss = tf.add(classification_term,tf.multiply(alpha,l2_norm))
+
+# alternatively,
+svmC = 100.
+regularization_loss = 0.5*tf.reduce_sum( tf.square(A) )
+hinge_loss = tf.reduce_mean(tf.maximum(0.,tf.subtract(1.,tf.multiply(model_output,y_target))))
+loss = regularization_loss + svmC*hinge_loss
+
+
 
 # prediction and accuracy functions
 prediction = tf.sign(model_output)
