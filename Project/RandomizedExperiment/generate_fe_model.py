@@ -2,23 +2,31 @@
 .py
 
 """
+# =======================================================================================
+# set path to external python libraries
 from sys import path
 path.append('C:\Program Files\Anaconda3\Lib\site-packages')
 
+# import abaqus stuff
 from abaqus import *
 from abaqusConstants import *
 backwardCompatibility.setValues(includeDeprecated=True,reportDeprecated=False)
 import part
 
 
-# Parameters
-# note: X-Y plane is plan view
+# =======================================================================================
+
+# @TODO Read sampled parameters
+nexps = 4 # number of experiments
+
+# Model block dimensions
+# note: X-Y plane is plan view (before rotation about X axis)
 BlockXDim = 120.  # longitudinal
 BlockYDim = 100.  # width
 BlockZDim = 100.  # vertical depth
 								
 
-for i in range(0,4):								
+for i in range(0,nexps):
 
 	#-----------------------------------------------------
 	# Create a model.
