@@ -3,6 +3,7 @@
 # %load ../standard_import.txt
 import pandas as pd
 import numpy as np
+import math
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import axes3d
 import seaborn as sns
@@ -15,6 +16,9 @@ import statsmodels.formula.api as smf
 
 plt.style.use('seaborn-white')
 
+# ==============================================
+# Load Datasets
+# ==============================================
 advertising = pd.read_csv('Ref/Data/Advertising.csv', usecols=[1,2,3,4])
 advertising.info()
 
@@ -92,4 +96,42 @@ for ax in fig.axes:
     ax.set_yticks([0.03,0.04,0.05,0.06])
     ax.legend()
 
-    
+# ===================================================================   
+# Confidence interval on page 67 & Table 3.1 & 3.2 using Statsmodels
+# ===================================================================   
+est = smf.ols('Sales ~ TV', advertising).fit()
+print(est.summary().tables[1])
+
+# RSS with regression coefficients
+Sales_pred = est.params[0] + est.params[1]*advertising.TV
+RSS = ((advertising.Sales - Sales_pred)**2).sum()
+RSE = math.sqrt(RSS/( len(advertising.Sales) - 2 ))
+print(RSE)
+
+TSS = ((advertising.Sales - np.mean(Sales_pred))**2).sum()
+R2 = 1.0 - RSS/TSS
+print(R2)
+
+# ===================================================================   
+# Table 3.1 & 3.2 using Scikit-learn
+# ===================================================================   
+regr = skl_lm.LinearRegression()
+
+X = advertising.TV.values.reshape(-1,1)
+y = advertising.Sales
+
+regr.fit(X,y)
+print(regr.intercept_)
+print(regr.coef_)
+# RSS with regression coefficients
+RSS = ((advertising.Sales - (regr.intercept_ + regr.coef_*advertising.TV))**2).sum()
+RSE = math.sqrt(RSS/( len(advertising.Sales) - 2 ))
+print(RSE)
+
+mean_sales = np.mean(advertising.Sales.values)
+print("percent error = %f\n"%(RSE/mean_sales*100))
+
+Sales_pred = regr.predict(X)
+R2 = r2_score(y, Sales_pred)
+print(R2)
+
