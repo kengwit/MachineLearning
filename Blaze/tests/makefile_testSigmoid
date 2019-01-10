@@ -1,0 +1,34 @@
+# Usage:
+# nmake -f makefile 
+# nmake -f makefile clean
+
+#BOOST_INCS = "C:\Users\klim\Desktop\Research\HardeningSoil\libraries\boost_1_59_0" 
+#EIGEN_INCS = "C:\Users\klim\Desktop\Research\HardeningSoil\libraries\eigen-3_2_6" 
+#ABQ_INCS1  = "C:\Program Files\Dassault Systemes\SimulationServices\V6R2018x\SMAUsubs\PublicInterfaces"
+#ABQ_INCS2  = "C:\Program Files\Dassault Systemes\SimulationServices\V6R2018x\SMABase\PublicInterfaces"
+
+TACO_LIB = "/cygdrive/c/Users/klim/Desktop/Research/GITProjects/GITHUB/MachineLearning/Blaze/taco-master/build/lib"
+TACO_INC = "/cygdrive/c/Users/klim/Desktop/Research/GITProjects/GITHUB/MachineLearning/Blaze/taco-master/include"
+
+###INC = -I$(TACO_INC)
+
+GCC = g++
+MYFLAGS = -O2
+
+PROGNAME = testSigmoid
+OBJS = testSigmoid.o
+
+$(PROGNAME): $(OBJS)
+	$(GCC) -o $(PROGNAME) $(OBJS) -L$(TACO_LIB) -ltaco
+
+$(PROGNAME).o: $(PROGNAME).cpp
+	$(GCC) -c $(PROGNAME).cpp -I$(TACO_INC)
+	
+	
+#$(PROGNAME).o: $(PROGNAME).cpp 
+#	$(GCC) $(MYFLAGS) -o $(PROGNAME) *.o /I$(TACO_INC)
+
+	
+clean:
+	rm -f *~ *.o $(PROGNAME)
+	
