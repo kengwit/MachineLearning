@@ -6,11 +6,14 @@ from scipy.stats import chi2, chisquare
 #np.random.seed(42)
 
 n = 20
-nsim = 3
+nsim = 10000
+nbins = 4
+nbins_plot = 40
+nbin_edges = nbins+1
 x = np.random.normal(0, 1, (n,nsim))
 # create four bins with cutpoints at the quartiles of a standard normal: -0.675, 0, +0.657,
 # i.e., create for 4 bins of standard normal for probabilities [0., 0.25, 0.5, 0.75, 1.0]
-bins = norm.ppf( np.linspace(0,1,num=5) )  
+bins = norm.ppf( np.linspace(0,1,num=nbin_edges) )  
 
 # Compute statistics.
 #
@@ -20,7 +23,8 @@ bins = norm.ppf( np.linspace(0,1,num=5) )
 #    x[i,1] = 2*i/10
     
 m = x.mean(axis=0)
-s = np.std(x, axis=0, ddof=0) # note: ddof=0 is the max likelihood estimate, ddof=1 is the unbiased estimate
+ddof = 1 # note: ddof=0 is the max likelihood estimate (divide by n), ddof=1 is the unbiased estimate (divide by (n-1))
+s = np.std(x, axis=0, ddof=ddof) 
 ##s = np.std(x, axis=0, ddof=1) # note: ddof=0 is the max likelihood estimate, ddof=1 is the unbiased estimate
 
 #check = x[:,0]
@@ -90,7 +94,7 @@ def get_expectations(x,m,s,bin_seq):
 expectations = get_expectations(x,m,s,bins)
 
 plt.figure()
-plt.hist(m, bins=20,density=True)  # arguments are passed to np.histogram
+plt.hist(m, bins=nbins_plot,density=True)  # arguments are passed to np.histogram
 x_axis = np.arange(-2, 2, 0.001)
 
 # note: 
@@ -108,14 +112,23 @@ plt.xlabel('Mean')
 plt.ylabel('Density')
 
 plt.figure()
-#plt.hist(s**2, bins=20,density=True)  # arguments are passed to np.histogram
+# note: 
+# (n-1)s^2/sig^2 ~ chi^2_{n-1}
+# since sig=1 (normal(0,1))
+# (n-1)s^2 ~ chi^2_{n-1}
+
+df=n-ddof    
+plt.hist(df*(s**2), bins=nbins_plot,density=True)  # arguments are passed to np.histogram
+#plt.hist(s**2/m**2, bins=20,density=True)  # arguments are passed to np.histogram
 #x =  x.asarray()*(n-1)
 #x2 = np.sort( x.ravel() )
-df=n-1
-#x_axis = np.linspace(chi2.ppf(0.001, df), chi2.ppf(0.999, df), 100)
+chi2_val0 = chi2.ppf(0.001, df)
+chi2_val1 = chi2.ppf(0.999, df)
+chi2_axis = np.linspace(chi2_val0, chi2_val1, 100)
+plt.plot(chi2_axis, chi2.pdf(chi2_axis, df ) )
 #plt.plot(x_axis /df, chi2.pdf(x_axis , df )*df )
 
-plt.plot(x*df, 1.0 )
+#plt.plot(x*df, 1.0 )
 #plt.xlim(0,1.0)
 #plt.plot(x,chisquare(x, axis=None))
 plt.xlabel('$s^2$')
