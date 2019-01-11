@@ -295,15 +295,15 @@ so that
 \end{array}
 \right)
 \end{eqnarray}
-and formulas become more transparent. For example, the standard error of the estimated slope is
+and formulas become more transparent. For example, the \emph{standard error} of the estimated slope $\beta_1$ is
 \begin{eqnarray}
-\sqrt{\widehat{\text{Var}}(\hat{\beta_1})} = \sqrt{[\hat{\sigma}^2  (\mathbf{X}^{\prime} \mathbf{X})^{-1}]_{22}} = \sqrt{\frac{n \hat{\sigma}^2}{n\sum x_i^2 - (\sum x_i)^2}}.
+\widehat{\text{SE}}(\hat{\beta_1}) \equiv \sqrt{\widehat{\text{Var}}(\hat{\beta_1})} = \sqrt{[\hat{\sigma}^2  (\mathbf{X}^{\prime} \mathbf{X})^{-1}]_{22}} = \sqrt{\frac{n \hat{\sigma}^2}{n\sum x_i^2 - (\sum x_i)^2}}.
 \end{eqnarray}
 The denominator can be written as
 \begin{eqnarray}
 n \sum_i (x_i - \bar{x})^2
 \end{eqnarray}
-Therefore, the square root of the variance of $\beta_1$, now known as the \emph{standard error} of $beta_1$ is:
+Therefore,
 \begin{eqnarray}
 \widehat{\text{SE}}(\hat{\beta_1}) = \sqrt{\frac{\hat{\sigma}^2}{\sum_i (x_i - \bar{x})^2}}
 \end{eqnarray}
@@ -311,7 +311,8 @@ with
 \begin{eqnarray}
 \hat{\sigma}^2 = \frac{1}{n-2} \sum_i \hat{\epsilon}_i^2
 \end{eqnarray}
-i.e., the Mean Square Error (MSE) in the ANOVA table, we end up with your expression for $\sqrt{\widehat{\text{Var}}(\hat{\beta_1})}$. The $n-2$ term accounts for the loss of 2 degrees of freedom in the estimation of the intercept and the slope. This explanation of degrees of freedom is standard but in fact is technically not correct; see interesting discussion on degrees of freedom on \url{https://stats.stackexchange.com/questions/16921/how-to-understand-degrees-of-freedom}
+%%%i.e., the Mean Square Error (MSE) in the ANOVA table, we end up with your expression for $\sqrt{\widehat{\text{Var}}(\hat{\beta_1})}$. 
+The $n-2$ term accounts for the loss of 2 degrees of freedom in the estimation of the intercept and the slope. This explanation of degrees of freedom is standard but is in fact technically \emph{not correct}; see interesting discussion on degrees of freedom on \url{https://stats.stackexchange.com/questions/16921/how-to-understand-degrees-of-freedom}
 
 
 \pagebreak
@@ -348,7 +349,7 @@ In this case, the hypothesis tests for the significance of regression. In other 
         %\caption{\label{fig:my-label} My figure.  An example of a cool figure}
       \end{figure}
 
-(a) represents the case where no model exits for the observed data. In this case you would be trying to fit a regression model to noise or random variation. (b) represents the case where the true relationship between $\mathbf{x}$ and $\mathbf{Y}$ is not linear. (c) and (d) represent the case when $H_0: \beta_1 = 0$ is rejected, implying that a model does exist between $\mathbf{x}$ and $\mathbf{Y}$. (c) represents the case where the linear model is sufficient. In the following figure, (d) represents the case where a higher order model may be needed.
+(a) represents the case where no model exits for the observed data (note: the slope or $\beta_1$ is zero). In this case you would be trying to fit a regression model to noise or random variation. (b) represents the case where the true relationship between $\mathbf{x}$ and $\mathbf{Y}$ is not linear. (c) and (d) represent the case when $H_0: \beta_1 = 0$ is rejected, implying that a model does exist between $\mathbf{x}$ and $\mathbf{Y}$. (c) represents the case where the linear model is sufficient. In the following figure, (d) represents the case where a higher order model may be needed.
 
 First we need to say something about the variance of the estimators. Usually the actual variance $\sigma$ is not known and it is estimated as
 \begin{eqnarray}
@@ -356,11 +357,11 @@ First we need to say something about the variance of the estimators. Usually the
 \end{eqnarray}
 Then from \eqref{VarianceEstimatorDiag}, the estimate of the variance of the $j$-th estimator is
 \begin{eqnarray}
-var(\hat{\beta}_j) &\approx& \hat{\sigma}^2 v_j = \hat{\sigma}^2 \left(\mathbf{X}^T\mathbf{X}\right)^{-1}_{jj}\label{VarianceEstimatorDiagEstimate}
+\text{Var}(\hat{\beta}_j) &\approx& \hat{\sigma}^2 v_j = \hat{\sigma}^2 \left(\mathbf{X}^T\mathbf{X}\right)^{-1}_{jj}\label{VarianceEstimatorDiagEstimate}
 \end{eqnarray}
 For hypothesis testing, we first calculate the Z-score of the $j$-the estimator
 \begin{eqnarray}
-z_j &=&\dfrac{\hat{\beta}_j - \beta_j}{\sqrt{var(\hat{\beta}_j)}}\nonumber\\
+z_j &=&\dfrac{\hat{\beta}_j - \beta_j}{\sqrt{\text{Var}(\hat{\beta}_j)}}\nonumber\\
 %%
 &=&\dfrac{\hat{\beta}_j}{\hat{\sigma} \sqrt{v_j}}
 \end{eqnarray}
