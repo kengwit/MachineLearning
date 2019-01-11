@@ -23,15 +23,15 @@ bins = norm.ppf( np.linspace(0,1,num=nbin_edges) )
 #    x[i,1] = 2*i/10
     
 m = x.mean(axis=0)
-ddof = 1 # note: ddof=0 is the max likelihood estimate (divide by n), ddof=1 is the unbiased estimate (divide by (n-1))
+ddof = 0 # note: ddof=0 is the max likelihood estimate (divide by n), ddof=1 is the unbiased estimate (divide by (n-1))
 s = np.std(x, axis=0, ddof=ddof) 
-##s = np.std(x, axis=0, ddof=1) # note: ddof=0 is the max likelihood estimate, ddof=1 is the unbiased estimate
 
-#check = x[:,0]
-#check = check - check.mean()
-#std_dev = np.sqrt( (check**2).sum() / ( len(check) - 1 ) )
-
-
+# =====================================
+# alternatively, calculate your own
+#xdiff = x - m
+#s_squared = np.apply_along_axis(lambda a: (a**2).sum(),0,xdiff) / ( n - ddof ) 
+#s = np.sqrt( s_squared ) 
+# =====================================
 
 # for a given column, bin the elements in that column
 #def get_counts(x,bin_seq):
@@ -93,6 +93,10 @@ def get_expectations(x,m,s,bin_seq):
 
 expectations = get_expectations(x,m,s,bins)
 
+chisquared = ( (counts - expectations)**2 / expectations ).sum(axis=0)
+
+
+
 plt.figure()
 plt.hist(m, bins=nbins_plot,density=True)  # arguments are passed to np.histogram
 x_axis = np.arange(-2, 2, 0.001)
@@ -132,4 +136,21 @@ plt.plot(chi2_axis, chi2.pdf(chi2_axis, df ) )
 #plt.xlim(0,1.0)
 #plt.plot(x,chisquare(x, axis=None))
 plt.xlabel('$s^2$')
+plt.ylabel('Density')
+
+plt.figure()
+plt.hist(chisquared, bins=nbins_plot,density=True)  # arguments are passed to np.histogram
+chi2_df1_val0 = chi2.ppf(0.001, 1)
+chi2_df1_val1 = chi2.ppf(0.999, 1)
+chi2_df1_axis = np.linspace(chi2_df1_val0, chi2_df1_val1, 100)
+plt.plot(chi2_df1_axis, chi2.pdf(chi2_df1_axis, 1 ) )
+
+chi2_df2_val0 = chi2.ppf(0.001, 2)
+chi2_df2_val1 = chi2.ppf(0.999, 2)
+chi2_df2_axis = np.linspace(chi2_df2_val0, chi2_df2_val1, 100)
+plt.plot(chi2_df2_axis, chi2.pdf(chi2_df2_axis, 2 ) )
+
+plt.xlim(0,12)
+plt.ylim(0,0.6)
+plt.xlabel('$\chi^2$')
 plt.ylabel('Density')
