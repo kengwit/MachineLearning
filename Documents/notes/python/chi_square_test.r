@@ -4,8 +4,8 @@
 n <- 20
 n.sim <- 1e4
 
-#n <- 5
-#n.sim <- 3
+n <- 5
+n.sim <- 3
 
 bins <- qnorm(seq(0, 1, 1/4))
 x <- matrix(rnorm(n*n.sim), nrow=n)
@@ -50,7 +50,8 @@ curve(dnorm(x, sd=1/sqrt(n)), add=TRUE, col=red, lwd=2)
 
 # plot 2
 hist(s^2, freq=FALSE)
-curve(dchisq(x*(n-1), df=n-1)*(n-1), add=TRUE, col=red, lwd=2)
+# note: the "x" in curve below is a variable, not the same x above !!!
+curve(dchisq(x*(n-1), df=n-1)*(n-1), type="p",pch=1, add=TRUE, col=red, lwd=2)
 
 
 # plot 3

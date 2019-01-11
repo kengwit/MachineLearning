@@ -2,10 +2,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 import scipy.stats as sst
 from scipy.stats import norm
+from scipy.stats import chi2, chisquare
 #np.random.seed(42)
 
 n = 20
-nsim = 10000
+nsim = 3
 x = np.random.normal(0, 1, (n,nsim))
 # create four bins with cutpoints at the quartiles of a standard normal: -0.675, 0, +0.657,
 # i.e., create for 4 bins of standard normal for probabilities [0., 0.25, 0.5, 0.75, 1.0]
@@ -91,11 +92,31 @@ expectations = get_expectations(x,m,s,bins)
 plt.figure()
 plt.hist(m, bins=20,density=True)  # arguments are passed to np.histogram
 x_axis = np.arange(-2, 2, 0.001)
+
+# note: 
+# If X1,X2,…,Xn are n independent observations from a 
+# population that has a mean μ and standard deviation σ, 
+# then the variance of the total T=(X1+X2+⋯+Xn) is nσ2.
+#
+# The variance of T/n must be (nσ^2)/n^2=σ^2/n. 
+# And the standard deviation of T/n must be sqrt(variance) = σ/sqrt(n). 
+# Of course, T/n is the sample mean \bar{x}.
+#
 plt.plot(x_axis, norm.pdf(x_axis,loc=0.0,scale=1/np.sqrt(n)))
 plt.xlim(-0.75,0.75)
+plt.xlabel('Mean')
+plt.ylabel('Density')
 
 plt.figure()
-plt.hist(m, bins=20,density=True)  # arguments are passed to np.histogram
-x_axis = np.arange(-2, 2, 0.001)
-plt.plot(x_axis, norm.pdf(x_axis,loc=0.0,scale=1/np.sqrt(n)))
-plt.xlim(-0.75,0.75)
+#plt.hist(s**2, bins=20,density=True)  # arguments are passed to np.histogram
+#x =  x.asarray()*(n-1)
+#x2 = np.sort( x.ravel() )
+df=n-1
+#x_axis = np.linspace(chi2.ppf(0.001, df), chi2.ppf(0.999, df), 100)
+#plt.plot(x_axis /df, chi2.pdf(x_axis , df )*df )
+
+plt.plot(x*df, 1.0 )
+#plt.xlim(0,1.0)
+#plt.plot(x,chisquare(x, axis=None))
+plt.xlabel('$s^2$')
+plt.ylabel('Density')
