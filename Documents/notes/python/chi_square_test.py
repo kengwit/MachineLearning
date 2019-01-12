@@ -6,7 +6,7 @@ from scipy.stats import chi2, chisquare
 #np.random.seed(42)
 
 n = 20
-nsim = 10000
+nsim = 1000
 nbins = 4
 nbins_plot = 40
 nbin_edges = nbins+1
@@ -14,7 +14,7 @@ x = np.random.normal(0, 1, (n,nsim))
 # create four bins with cutpoints at the quartiles of a standard normal: -0.675, 0, +0.657,
 # i.e., create for 4 bins of standard normal for probabilities [0., 0.25, 0.5, 0.75, 1.0]
 bins = norm.ppf( np.linspace(0,1,num=nbin_edges) )  
-
+#bins = [0.001, 0.25, 0.5, 0.75, 0.999]
 # Compute statistics.
 #
 #x = np.zeros(shape=(5,2))
@@ -23,7 +23,7 @@ bins = norm.ppf( np.linspace(0,1,num=nbin_edges) )
 #    x[i,1] = 2*i/10
     
 m = x.mean(axis=0)
-ddof = 0 # note: ddof=0 is the max likelihood estimate (divide by n), ddof=1 is the unbiased estimate (divide by (n-1))
+ddof = 1 # note: ddof=0 is the max likelihood estimate (divide by n), ddof=1 is the unbiased estimate (divide by (n-1))
 s = np.std(x, axis=0, ddof=ddof) 
 
 # =====================================
@@ -55,14 +55,36 @@ def get_counts(x,bin_seq):
     ncols = np.shape(x)[1]
     nbins = len(bin_seq)-1
     counts = np.zeros(shape=(nbins,ncols))
+    #m      = np.zeros(ncols)
+    #s      = np.zeros(ncols)
     for i in range(0,ncols):
         xi = x[:,i]
         hist, bin_edges = np.histogram(xi, bins=bin_seq)
+        #print(bin_edges)
+        #mids = 0.5*(bin_edges[1:] + bin_edges[:-1])    
+        #print(mids,hist)
+        #mean = np.average(mids, weights=hist)
+        #var  = np.average((mids - mean)**2, weights=n)
+        #print(mean)
         counts[:,i] = hist
+        #m[i]        = norm.ppf(mean)
+        #s[i] = np.sqrt(var)
+        
     return counts
 
 counts = get_counts(x,bins)
 
+
+#def get_hist_stats(counts):
+#    nbins = np.shape(counts)[0]
+#    ncols = np.shape(counts)[1]
+#    for i in range(0,ncols):
+#        bins = counts[:,i]
+#        mids = 0.5*(bins[1:] + bins[:-1])
+#        print(mids)
+#
+#get_hist_stats(counts)
+    
 def get_expectations(x,m,s,bin_seq):
     
     n     = np.shape(x)[0]
