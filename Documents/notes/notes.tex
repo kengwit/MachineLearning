@@ -251,12 +251,31 @@ Denote $v_j$ as the $j$-th diagonal element of $\left(\mathbf{X}^T\mathbf{X}\rig
 \end{eqnarray}
 $\mathbf{X}^T\mathbf{X}$ measures the spread so that as the spread increases, the variance of the estimator decreases (check this statement).
 
+Typically, the population variance $\sigma^2$ is unknown and estimated as:
+\begin{eqnarray}
+\hat{\sigma}^2 &=& \dfrac{1}{N-p-1}\sum_{i=1}^N (y_i - \hat{y}_i)^2
+\end{eqnarray}
+The $N-p-1$ rather than $N$ in the denominator makes $\hat{\sigma}^2$ an unbiased estimate of $\sigma^2$, i.e., $\mathbb{E}(\hat{\sigma}^2) = \sigma^2$.
+
 Based on the above, we have
 \begin{eqnarray}
 \boldsymbol{\hat{\beta}}\sim N(\boldsymbol{\beta},\sigma^2 \left(\mathbf{X}^T\mathbf{X}\right)^{-1})
 \label{NormallyDistributedBetaHat}
 \end{eqnarray}
-(How do you know that it is normally distributed? Based on properties of sum and multiplication by a constant for normal distributions?).
+(How do you know that it is normally distributed? Based on properties of sum and multiplication by a constant for normal distributions?). Furthermore, since the expectation (mean) of a chi-squared distribution of $N-p-1$ is:
+\begin{eqnarray}
+\mathbb{E}(\chi^2_{N-p-1})=N-p-1
+\end{eqnarray}
+we have
+\begin{eqnarray}
+\mathbb{E}\left(\frac{1}{N-p-1}\sum(y_i-\hat{y}_i)^2\right)= \mathbb{E}(\hat{\sigma}^2) = \sigma^2
+\end{eqnarray}
+Therefore,
+\begin{eqnarray}
+(N-p-1)(\hat{\sigma}^2) \sim \sigma^2\chi^2_{N-p-1}
+\end{eqnarray}
+
+
 
 \subsection{Case of single explanatory variable}
 When there is a single explanatory variable, the model \eqref{eqTrueY} reduces to:
@@ -311,7 +330,7 @@ with
 \begin{eqnarray}
 \hat{\sigma}^2 = \frac{1}{n-2} \sum_i \hat{\epsilon}_i^2
 \end{eqnarray}
-%%%i.e., the Mean Square Error (MSE) in the ANOVA table, we end up with your expression for $\sqrt{\widehat{\text{Var}}(\hat{\beta_1})}$. 
+%%%i.e., the Mean Square Error (MSE) in the ANOVA table, we end up with your expression for $\sqrt{\widehat{\text{Var}}(\hat{\beta_1})}$.
 The $n-2$ term accounts for the loss of 2 degrees of freedom in the estimation of the intercept and the slope. This explanation of degrees of freedom is standard but is in fact technically \emph{not correct}; see interesting discussion on degrees of freedom on \url{https://stats.stackexchange.com/questions/16921/how-to-understand-degrees-of-freedom}
 
 
