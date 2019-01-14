@@ -103,5 +103,10 @@ print ('RSS0 = ', rss0)
 print ('F =', f_stats)
 print (f'Pr(F({dfn}, {dfd}) > {f_stats:.2f}) = {prob:.2f}')
 
+test_x = df[mask_train == 'F']
+test_y = df_y[mask_train == 'F']
+mean_prediction_error = np.mean( ( model.predict(test_x.values) - test_y.values )**2 )
+base_error_rate       = np.mean( ( np.mean(train_y.values) - test_y.values )**2 )
 
-
+print ('Prediction error: ', mean_prediction_error)
+print ('Base error rate: ', base_error_rate)
